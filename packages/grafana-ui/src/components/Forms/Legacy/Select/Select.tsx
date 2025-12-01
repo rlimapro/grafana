@@ -119,7 +119,12 @@ export class Select<T> extends PureComponent<LegacySelectProps<T>> {
     }
 
     let SelectComponent = ReactSelect;
-    const creatableOptions: any = {};
+
+    // Code Smell 3: Any Type
+    // Removido o uso de any em creatableOptions.
+    // creatableOptions pode conter apenas a função formatCreateLabel quando
+    // allowCustomValue está habilitado, então tipei explicitamente esse objeto
+    const creatableOptions: { formatCreateLabel?: (input: string) => string } = {};
 
     if (allowCustomValue) {
       SelectComponent = Creatable;

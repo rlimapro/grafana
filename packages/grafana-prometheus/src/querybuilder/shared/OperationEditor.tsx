@@ -16,13 +16,17 @@ import {
   QueryBuilderOperationDef,
   QueryBuilderOperationParamDef,
   QueryBuilderOperationParamValue,
+  // Importado para substituir o any
+  QueryWithOperations,
   VisualQueryModeller,
 } from './types';
 
 interface Props {
   operation: QueryBuilderOperation;
   index: number;
-  query: any;
+  // Code Smell 1: Any Type
+  // Substituição do any pela interface correta
+  query: QueryWithOperations;
   datasource: DataSourceApi;
   queryModeller: VisualQueryModeller;
   onChange: (index: number, update: QueryBuilderOperation) => void;

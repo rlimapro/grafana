@@ -13,8 +13,10 @@ export interface Props {
   children: React.ReactNode;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface StateType<TProps = any> {
+// Code Smell 6: Any Type
+// Substituí TProps = any por TProps = Record<string, unknown> Isso garante que as props
+// sejam um objeto com chaves e valores tipados.
+interface StateType<TProps = Record<string, unknown>> {
   component: React.ComponentType<TProps> | null;
   props: TProps;
 }

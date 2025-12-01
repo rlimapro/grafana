@@ -346,8 +346,10 @@ export function getAlertingRoutes(cfg = config): RouteDescriptor[] {
   return routes;
 }
 
-// this function will always load the "feature disabled" component for all alerting routes
-function importAlertingComponent(loader: () => any): GrafanaRouteComponent {
+// Code Smell 7: Any Type
+// O `loader` realiza um dynamic import e retorna uma Promise do módulo importado.
+// Substituí () => any por () => Promise<unknown> para evitar o code smell Any Type
+function importAlertingComponent(loader: () => Promise<unknown>): GrafanaRouteComponent {
   const featureDisabledPageLoader = () =>
     import(/* webpackChunkName: "AlertingDisabled" */ 'app/features/alerting/unified/AlertingNotEnabled');
   return SafeDynamicImport(config.unifiedAlertingEnabled ? loader : featureDisabledPageLoader);

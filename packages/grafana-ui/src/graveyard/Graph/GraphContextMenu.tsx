@@ -21,7 +21,10 @@ import { useStyles2 } from '../../themes/ThemeContext';
 import { GraphDimensions } from './GraphTooltip/types';
 
 /** @deprecated */
-export type ContextDimensions<T extends Dimensions = any> = { [key in keyof T]: [number, number | undefined] | null };
+// Code Smell 4: Any Type
+// Substituí any por Dimensions para evitar o code smell "Any Type"
+// e manter a restrição `T extends Dimensions`.
+export type ContextDimensions<T extends Dimensions = Dimensions> = { [key in keyof T]: [number, number | undefined] | null };
 
 /** @deprecated */
 export type GraphContextMenuProps = ContextMenuProps & {

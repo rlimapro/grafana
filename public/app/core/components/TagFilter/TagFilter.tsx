@@ -104,16 +104,29 @@ export const TagFilter = ({
     }
   }, [onFocus, previousTags, tags]);
 
-  const onTagChange = (newTags: any[]) => {
+  // Code Smell 5: Any Type
+  // Removi o uso de any no parâmetro newTags. Agora newTags tem o tipo TagSelectOption[] | null
+  const onTagChange = (newTags: TagSelectOption[] | null) => {
+    // Se newTags for nulo, nada a processar
+    if (!newTags) {
+      // On remove with 1 item returns null, so we need to make sure it's an empty array in that case
+      // https://github.com/JedWatson/react-select/issues/3632
+      onChange([]);
+      if (allowCustomValue) {
+        setCustomTags([]);
+      }
+      return;
+    }
+
+    // Garante que o campo `count` esteja definido para renderização
     newTags.forEach((tag) => (tag.count = 0));
 
-    // On remove with 1 item returns null, so we need to make sure it's an empty array in that case
-    // https://github.com/JedWatson/react-select/issues/3632
-    onChange((newTags || []).map((tag) => tag.value));
+    onChange(newTags.map((tag) => tag.value));
 
     // If custom values are allowed, set custom tags to prevent overwriting from query update
     if (allowCustomValue) {
-      setCustomTags(newTags.filter((tag) => !tags.includes(tag)));
+      // comparar pelo `value` das opções
+      setCustomTags(newTags.filter((tag) => !tags.includes(tag.value)));
     }
   };
 
