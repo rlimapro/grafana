@@ -79,7 +79,19 @@ export function usePreview(): [PreviewRuleResponse | undefined, () => void] {
   return [preview, onPreview];
 }
 
-function createPreviewRequest(values: any[]): PreviewRuleRequest {
+// Code Smell 8: Any Type
+// Removi o uso de any[] no parâmetro values.
+// Agora usamos uma tupla com tipos derivados de RuleFormValues para que o
+// TypeScript verifique corretamente os elementos esperados na posição correta.
+type PreviewValuesTuple = [
+  RuleFormValues['type'],
+  RuleFormValues['dataSourceName'],
+  RuleFormValues['condition'],
+  RuleFormValues['queries'],
+  RuleFormValues['expression']
+];
+
+function createPreviewRequest(values: PreviewValuesTuple): PreviewRuleRequest {
   const [type, dataSourceName, condition, queries, expression] = values;
   const dsSettings = getDataSourceSrv().getInstanceSettings(dataSourceName);
   if (!dsSettings) {

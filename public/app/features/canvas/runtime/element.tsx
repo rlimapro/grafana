@@ -61,9 +61,11 @@ export class ElementState implements LayerElement {
   // Filled in by ref
   div?: HTMLDivElement;
 
-  // Calculated
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data?: any; // depends on the type
+
+  // Code Smell 9: Any Type
+  // Removido o uso de any neste campo. data pode variar conforme o tipo do elemento, por isso usei unknown
+  // e adicionei verificações de tipo nos pontos de uso antes de acessar propriedades como field.
+  data?: unknown; // depends on the type
 
   getLinks?: (config: ValueLinkConfig) => LinkModel[];
 
@@ -903,7 +905,10 @@ export class ElementState implements LayerElement {
 
   getPrimaryDataLink = () => {
     if (this.getLinks) {
-      const links = this.getLinks({ valueRowIndex: getRowIndex(this.data.field, this.getScene()!) });
+      // Segurança de tipos: data é unknown, verificar se tem field antes de usar
+      const field = this.data && typeof this.data === 'object' && 'field' in this.data ? (this.data).field : undefined;
+      const valueRowIndex = field ? getRowIndex(field, this.getScene()!) : 0;
+      const links = this.getLinks({ valueRowIndex });
       return links.find((link) => link.oneClick === true);
     }
 
@@ -919,7 +924,10 @@ export class ElementState implements LayerElement {
       return undefined;
     }
 
-    const config: ValueLinkConfig = { valueRowIndex: getRowIndex(this.data.field, scene!) };
+    // Segurança de tipos: data é unknown, verificar se tem field antes de usar
+    const field = this.data && typeof this.data === 'object' && 'field' in this.data ? (this.data).field : undefined;
+    const valueRowIndex = field ? getRowIndex(field, scene!) : 0;
+    const config: ValueLinkConfig = { valueRowIndex };
     const actionsDefaultFieldConfig = { links: this.options.links ?? [], actions: this.options.actions ?? [] };
     const frames = scene?.data?.series;
 

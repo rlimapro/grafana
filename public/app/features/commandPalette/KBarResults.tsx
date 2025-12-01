@@ -17,8 +17,10 @@ interface RenderParams<T = ActionImpl | string> {
 }
 
 interface KBarResultsProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  items: any[];
+  // Code Smell 10: Any Type
+  // Removido o uso de any[] neste prop. items pode conter ActionImpl (ações do kbar)
+  // ou strings (grupos), então defini explicitamente o tipo como Array<ActionImpl | string>.
+  items: Array<ActionImpl | string>;
   onRender: (params: RenderParams) => React.ReactElement;
   maxHeight?: number;
 }
