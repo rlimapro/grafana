@@ -16,7 +16,7 @@ import { ConfigCard } from './ConfigCard';
 import { Essentials } from './Essentials';
 
 export interface IrmCardConfiguration {
-  id: number;
+  id: ConfigurationStepsEnum;
   title: string;
   description: string;
   actionButtonTitle: string;
@@ -26,9 +26,13 @@ export interface IrmCardConfiguration {
   titleIcon?: IconName;
 }
 
+// Code Smell 4: Enum Implicit Values
+// Atribuí valores de string explícitos ao enum ConfigurationStepsEnum.
+// Além disso, atualizei a interface IrmCardConfiguration e a função handleActionClick
+// para usarem o tipo ConfigurationStepsEnum em vez de number no campo id e no parâmetro configID.
 export enum ConfigurationStepsEnum {
-  CONNECT_DATASOURCE,
-  ESSENTIALS,
+  CONNECT_DATASOURCE = 'connect_datasource',
+  ESSENTIALS = 'essentials',
 }
 
 export interface DataSourceConfigurationData {
@@ -65,7 +69,7 @@ export function ConfigureIRM() {
   const [queryParams, setQueryParams] = useURLSearchParams();
   const essentialsOpen = queryParams.get('essentials') === 'open';
 
-  const handleActionClick = (configID: number, isDone?: boolean) => {
+  const handleActionClick = (configID: ConfigurationStepsEnum, isDone?: boolean) => {
     trackIrmConfigurationTrackerEvent(IRMInteractionNames.ClickDataSources, {
       essentialStepsDone: essentialsConfigurationData.stepsDone,
       essentialStepsToDo: essentialsConfigurationData.totalStepsToDo,
