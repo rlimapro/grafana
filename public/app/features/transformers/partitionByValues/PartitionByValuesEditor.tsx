@@ -60,9 +60,11 @@ export function PartitionByValuesEditor({
     [onChange, options]
   );
 
+  // Code Smell 5: Enum Implicit Values
+  // Atribuí valores de string explícitos aos membros do enum namingModes
   enum namingModes {
-    asLabels,
-    frameName,
+    asLabels = 'asLabels',
+    frameName = 'frameName',
   }
 
   const namingModesOptions = [

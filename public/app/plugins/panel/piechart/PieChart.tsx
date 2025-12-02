@@ -393,10 +393,12 @@ function getPieLayout(height: number, width: number, pieType: PieChartType, marg
   };
 }
 
+// Code Smell 9: Enum Implicit Values
+// Atribuí valores de string explícitos ao enum HighLightState.
 enum HighLightState {
-  Highlighted,
-  Deemphasized,
-  Normal,
+  Highlighted = 'highlighted',
+  Deemphasized = 'deemphasized',
+  Normal = 'normal',
 }
 
 function getHighlightState(highlightedTitle: string | undefined, arc: PieArcDatum<FieldDisplay>) {

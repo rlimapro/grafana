@@ -313,11 +313,13 @@ const getStyles = (theme: GrafanaTheme2) => {
   };
 };
 
+// Code Smell 8: Enum Implicit Values
+// Atribuí valores de string explícitos aos membros do enum PanelFilterType
 // Synthetic type
 enum PanelFilterType {
-  AllPanels,
-  IncludePanels,
-  ExcludePanels,
+  AllPanels = 'all',
+  IncludePanels = 'include',
+  ExcludePanels = 'exclude',
 }
 
 const getPanelFilters = () => [

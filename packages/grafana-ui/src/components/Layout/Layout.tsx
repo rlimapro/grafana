@@ -6,10 +6,13 @@ import { GrafanaTheme2 } from '@grafana/data';
 
 import { useStyles2 } from '../../themes/ThemeContext';
 
+// Code Smell 7: Enum Implicit Values
+// Atribuímos valores de string explícitos ao enum Orientation.
 enum Orientation {
-  Horizontal,
-  Vertical,
+  Horizontal = 'horizontal',
+  Vertical = 'vertical',
 }
+
 type Spacing = 'none' | 'xs' | 'sm' | 'md' | 'lg';
 type Justify = 'flex-start' | 'flex-end' | 'space-between' | 'center';
 type Align = 'normal' | 'flex-start' | 'flex-end' | 'center';

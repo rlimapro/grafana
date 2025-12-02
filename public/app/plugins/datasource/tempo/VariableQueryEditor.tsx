@@ -6,9 +6,11 @@ import { InlineField, InlineFieldRow, InputActionMeta, Select } from '@grafana/u
 import { TempoDatasource } from './datasource';
 import { OPTIONS_LIMIT } from './language_provider';
 
+// Code Smell 6: Enum Implicit Values
+// Atribuí valores de string explícitos ao enum TempoVariableQueryType.
 export enum TempoVariableQueryType {
-  LabelNames,
-  LabelValues,
+  LabelNames = 'label_names',
+  LabelValues = 'label_values',
 }
 
 export interface TempoVariableQuery extends DataQuery {
@@ -33,7 +35,10 @@ export type TempoVariableQueryEditorProps = {
 
 export const TempoVariableQueryEditor = ({ onChange, query, datasource, range }: TempoVariableQueryEditorProps) => {
   const [label, setLabel] = useState(query.label || '');
-  const [type, setType] = useState<number | undefined>(query.type);
+  // Atualizei a definição do estado type, substituindo o tipo genérico number
+  // por TempoVariableQueryType, para garantir que o TypeScript aceite os novos valores
+  // de string e mantenha a consistência do tipo em todo o componente.
+  const [type, setType] = useState<TempoVariableQueryType | undefined>(query.type);
   const [labelOptions, setLabelOptions] = useState<Array<SelectableValue<string>>>([]);
   const [labelQuery, setLabelQuery] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);

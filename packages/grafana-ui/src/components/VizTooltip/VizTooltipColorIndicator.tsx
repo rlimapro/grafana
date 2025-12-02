@@ -9,9 +9,13 @@ import { SeriesIcon } from '../VizLegend/SeriesIcon';
 import { ColorIndicator, DEFAULT_COLOR_INDICATOR } from './types';
 import { getColorIndicatorClass } from './utils';
 
+// Code Smell 1: Enum Implicit Values
+// Atribuí valores de string explícitos aos membros do enum.
+// Isso evita que os valores mudem acidentalmente caso novos membros
+// sejam adicionados ou a ordem seja alterada.
 export enum ColorIndicatorPosition {
-  Leading,
-  Trailing,
+  Leading = 'leading',
+  Trailing = 'trailing',
 }
 
 interface Props {

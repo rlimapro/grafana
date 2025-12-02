@@ -300,11 +300,13 @@ function goBackToList() {
   locationService.partial({ editIndex: null });
 }
 
+// Code Smell 3: Enum Implicit Values
+// Atribuí valores de string explícitos aos membros do enum PanelFilterType.
 // Synthetic type
 enum PanelFilterType {
-  AllPanels,
-  IncludePanels,
-  ExcludePanels,
+  AllPanels = 'all',
+  IncludePanels = 'include',
+  ExcludePanels = 'exclude',
 }
 
 const getPanelFilters = () => [

@@ -62,9 +62,11 @@ export type DerivedFieldConfig = {
   targetBlank?: boolean;
 };
 
+// Code Smell 10: Enum Implicit Values
+// Atribuí valores de string explícitos ao enum LokiVariableQueryType.
 export enum LokiVariableQueryType {
-  LabelNames,
-  LabelValues,
+  LabelNames = 'label_names',
+  LabelValues = 'label_values',
 }
 
 export interface LokiVariableQuery extends DataQuery {

@@ -18,14 +18,16 @@ import { CloseButton } from './CloseButton';
 export const DEFAULT_TOOLTIP_WIDTH = undefined;
 export const TOOLTIP_OFFSET = 10;
 
+// Code Smell 2: Enum Implicit Values
+// Atribuí valores de string correspondentes aos nomes dos membros do enum.
 // todo: barchart? histogram?
 export const enum TooltipHoverMode {
   // Single mode in TimeSeries, Candlestick, Trend, StateTimeline, Heatmap?
-  xOne,
+  xOne = 'xOne',
   // All mode in TimeSeries, Candlestick, Trend, StateTimeline, Heatmap?
-  xAll,
+  xAll = 'xAll',
   // Single mode in XYChart, Heatmap?
-  xyOne,
+  xyOne = 'xyOne',
 }
 
 type GetDataLinksCallback = (seriesIdx: number, dataIdx: number) => LinkModel[];
