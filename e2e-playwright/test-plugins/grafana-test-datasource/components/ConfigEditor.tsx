@@ -24,6 +24,7 @@ export function ConfigEditor(props: Props) {
     onOptionsChange({
       ...options,
       secureJsonData: {
+        ...options.secureJsonData,
         [key]: value,
       },
     });
@@ -88,7 +89,8 @@ export function ConfigEditor(props: Props) {
           inputId="config-auth-type"
           value={jsonData.authType ?? 'keys'}
           options={['keys', 'credentials'].map(toOption)}
-          onChange={(e: SelectableValue<string>) => onJsonDataChange('authType', e.value!)}
+          //REFATORADO: Substituído 'e.value!' por 'e.value ?? "keys"' para remover o Code Smell 
+          onChange={(e: SelectableValue<string>) => onJsonDataChange('authType', e.value ?? 'keys')}
         />
       </InlineField>
     </>

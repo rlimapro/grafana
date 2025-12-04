@@ -96,7 +96,12 @@ describe('buildFilteredTable', () => {
 [3][4]
     `);
 
-    const result = buildFilteredTable(container!);
+    // REFATORADO: Verificação explícita (Guard Clause) ao invés de '!'
+    if (!container) {
+      throw new Error('Falha ao criar o container de dados para o teste');
+    }
+
+    const result = buildFilteredTable(container);
 
     expect(result).toEqual({
       '0': { self: 1, total: 7, totalRight: 0 },
@@ -113,7 +118,12 @@ describe('buildFilteredTable', () => {
 [1][1]
     `);
 
-    const result = buildFilteredTable(container!);
+    // REFATORADO: Adicionada verificação explícita para garantir que o container existe
+    if (!container) {
+      throw new Error('Container inválido gerado pelo textToDataContainer');
+    }
+
+    const result = buildFilteredTable(container);
 
     expect(result).toEqual({
       '0': { self: 0, total: 6, totalRight: 0 },
@@ -129,7 +139,12 @@ describe('buildFilteredTable', () => {
     `);
 
     const matchedLabels = new Set(['1', '3']);
-    const result = buildFilteredTable(container!, matchedLabels);
+    // REFATORADO: Verificação de segurança (Guard Clause)
+    if (!container) {
+      throw new Error('Container inválido');
+    }
+
+    const result = buildFilteredTable(container, matchedLabels);
 
     expect(result).toEqual({
       '1': { self: 0, total: 3, totalRight: 0 },
@@ -145,7 +160,12 @@ describe('buildFilteredTable', () => {
     `);
 
     const matchedLabels = new Set<string>();
-    const result = buildFilteredTable(container!, matchedLabels);
+    // REFATORADO: Guard Clause adicionada
+    if (!container) {
+      throw new Error('Container inválido');
+    }
+
+    const result = buildFilteredTable(container, matchedLabels);
 
     expect(result).toEqual({});
   });
@@ -158,7 +178,12 @@ describe('buildFilteredTable', () => {
     `);
 
     const matchedLabels = new Set(['9']);
-    const result = buildFilteredTable(container!, matchedLabels);
+    // REFATORADO: Guard Clause para garantir a existência do container
+    if (!container) {
+      throw new Error('Container inválido');
+    }
+
+    const result = buildFilteredTable(container, matchedLabels);
 
     expect(result).toEqual({});
   });
@@ -169,7 +194,12 @@ describe('buildFilteredTable', () => {
 [1]
     `);
 
-    const result = buildFilteredTable(container!);
+    // REFATORADO: Guard Clause para garantir a segurança do teste
+    if (!container) {
+      throw new Error('Container inválido');
+    }
+
+    const result = buildFilteredTable(container);
 
     expect(result).toEqual({
       '0': { self: 0, total: 3, totalRight: 0 },

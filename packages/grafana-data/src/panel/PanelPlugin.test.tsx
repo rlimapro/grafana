@@ -328,7 +328,8 @@ describe('PanelPlugin', () => {
       };
 
       expect(panel.onPanelMigration).toBeDefined();
-      expect(panel.onPanelMigration!(migrationModel)).toEqual({
+      // REFATORADO: Trocado '!' por '?.'
+      expect(panel.onPanelMigration?.(migrationModel)).toEqual({
         newOption: 'migrated',
       });
     });
@@ -350,7 +351,9 @@ describe('PanelPlugin', () => {
         fieldConfig: { defaults: {}, overrides: [] },
       };
 
-      const result = await panel.onPanelMigration!(migrationModel);
+      // REFATORADO: Trocado '!' por '?.' para evitar erro fatal se a função não existir
+      const result = await panel.onPanelMigration?.(migrationModel);
+      
       expect(result).toEqual({
         newOption: 'async-migrated',
       });
@@ -448,9 +451,9 @@ describe('PanelPlugin', () => {
           ],
         },
       };
-
-      const result = panel.onPanelMigration!(complexModel);
-
+     // REFATORADO: Trocado '!' por '?.'
+      const result = panel.onPanelMigration?.(complexModel);
+      
       expect(result).toMatchObject({
         display: {
           mode: 'modern',
