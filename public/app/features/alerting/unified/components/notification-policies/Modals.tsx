@@ -23,24 +23,25 @@ const useAddPolicyModal = (
   handleAdd: (route: Partial<FormAmRoute>, referenceRoute: RouteWithID, position: InsertPosition) => Promise<void>,
   loading: boolean
 ): AddModalHook<RouteWithID> => {
-  const [showModal, setShowModal] = useState(false);
+  // REFATORADO01: Code Smell corrigido. O estado 'showModal' foi removido e agora é calculado com base na existência de 'referenceRoute'.
+  // const [showModal, setShowModal] = useState(false);  REMOVIDO
   const [insertPosition, setInsertPosition] = useState<InsertPosition | undefined>(undefined);
-  const [referenceRoute, setReferenceRoute] = useState<RouteWithID>();
+  const [referenceRoute, setReferenceRoute] = useState<RouteWithID | undefined>(undefined);
+
+  const showModal = !!referenceRoute;
+
+  const [error, setError] = useState<Error | undefined>(undefined);
 
   const handleDismiss = useCallback(() => {
     setReferenceRoute(undefined);
     setInsertPosition(undefined);
     setError(undefined);
-    setShowModal(false);
   }, []);
 
   const handleShow = useCallback((referenceRoute: RouteWithID, position: InsertPosition) => {
     setReferenceRoute(referenceRoute);
     setInsertPosition(position);
-    setShowModal(true);
   }, []);
-
-  const [error, setError] = useState<Error | undefined>(undefined);
 
   const modalElement = useMemo(
     () =>
@@ -85,28 +86,28 @@ const useAddPolicyModal = (
 
   return [modalElement, handleShow, handleDismiss];
 };
-
 const useEditPolicyModal = (
   alertManagerSourceName: string,
   handleUpdate: (route: Partial<FormAmRoute>) => Promise<void>,
   loading: boolean
 ): EditModalHook => {
-  const [showModal, setShowModal] = useState(false);
+  // REFATORADO02: Code Smell corrigido. Removido estado duplicado 'showModal'.
+  // const [showModal, setShowModal] = useState(false); // REMOVIDO
   const [isDefaultPolicy, setIsDefaultPolicy] = useState(false);
-  const [route, setRoute] = useState<RouteWithID>();
+  const [route, setRoute] = useState<RouteWithID | undefined>();
+
+  const showModal = !!route;
 
   const [error, setError] = useState<Error | undefined>(undefined);
 
   const handleDismiss = useCallback(() => {
     setRoute(undefined);
-    setShowModal(false);
     setError(undefined);
   }, []);
 
   const handleShow = useCallback((route: RouteWithID, isDefaultPolicy?: boolean) => {
     setIsDefaultPolicy(isDefaultPolicy ?? false);
     setRoute(route);
-    setShowModal(true);
   }, []);
 
   const modalElement = useMemo(
@@ -127,8 +128,6 @@ const useEditPolicyModal = (
           {error && <NotificationPoliciesErrorAlert error={error} />}
           {isDefaultPolicy && route && (
             <AmRootRouteForm
-              // TODO *sigh* this alertmanagersourcename should come from context or something
-              // passing it down all the way here is a code smell
               alertManagerSourceName={alertManagerSourceName}
               onSubmit={(values) => handleUpdate(values).catch(setError)}
               route={route}
@@ -144,7 +143,7 @@ const useEditPolicyModal = (
               }
             />
           )}
-          {!isDefaultPolicy && (
+          {!isDefaultPolicy && route && (
             <AmRoutesExpandedForm
               route={route}
               onSubmit={(values) => handleUpdate(values).catch(setError)}
@@ -172,19 +171,19 @@ const useDeletePolicyModal = (
   handleDelete: (route: RouteWithID) => Promise<void>,
   loading: boolean
 ): ModalHook<RouteWithID> => {
-  const [showModal, setShowModal] = useState(false);
+  // REFATORADO03: Code Smell corrigido. 'showModal' deixou de ser um estado duplicado e agora é calculado com base na existência de 'route'.
+  // const [showModal, setShowModal] = useState(false); REMOVIDO
   const [route, setRoute] = useState<RouteWithID>();
   const [error, setError] = useState<Error | undefined>(undefined);
+  const showModal = !!route;
 
   const handleDismiss = useCallback(() => {
     setRoute(undefined);
-    setShowModal(false);
     setError(undefined);
   }, [setRoute]);
 
   const handleShow = useCallback((route: RouteWithID) => {
     setRoute(route);
-    setShowModal(true);
   }, []);
 
   const modalElement = useMemo(
@@ -222,18 +221,19 @@ const useDeletePolicyModal = (
 
   return [modalElement, handleShow, handleDismiss];
 };
-
 const useAlertGroupsModal = (
   alertManagerSourceName: string
 ): [JSX.Element, (alertGroups: AlertmanagerGroup[], matchers?: ObjectMatcher[]) => void, () => void] => {
-  const [showModal, setShowModal] = useState(false);
-  const [alertGroups, setAlertGroups] = useState<AlertmanagerGroup[]>([]);
+// REFATORADO04: Code Smell corrigido. Estado 'showModal' removido. Agora a visibilidade é derivada: se 'alertGroups' não for undefined, o modal abre.
+  // const [showModal, setShowModal] = useState(false); // REMOVIDO
+  // Alterei o estado inicial de [] para undefined para indicar "fechado"
+  const [alertGroups, setAlertGroups] = useState<AlertmanagerGroup[] | undefined>(undefined);
   const [matchers, setMatchers] = useState<ObjectMatcher[]>([]);
   const [formatter, setFormatter] = useState<MatcherFormatter>('default');
+  const showModal = !!alertGroups;
 
   const handleDismiss = useCallback(() => {
-    setShowModal(false);
-    setAlertGroups([]);
+    setAlertGroups(undefined); 
     setMatchers([]);
   }, []);
 
@@ -246,15 +246,16 @@ const useAlertGroupsModal = (
       if (formatter) {
         setFormatter(formatter);
       }
-      setShowModal(true);
     },
     []
   );
 
+  const safeAlertGroups = alertGroups ?? [];
+
   const instancesByState = useMemo(() => {
-    const instances = alertGroups.flatMap((group) => group.alerts);
+    const instances = safeAlertGroups.flatMap((group) => group.alerts);
     return groupBy(instances, (instance) => instance.status.state);
-  }, [alertGroups]);
+  }, [safeAlertGroups]);
 
   const modalElement = useMemo(
     () => (
@@ -280,7 +281,7 @@ const useAlertGroupsModal = (
             unprocessed={instancesByState[AlertState.Unprocessed]?.length}
           />
           <div>
-            {alertGroups.map((group, index) => (
+            {safeAlertGroups.map((group, index) => (
               <AlertGroup key={index} alertManagerSourceName={alertManagerSourceName} group={group} />
             ))}
           </div>
@@ -292,7 +293,7 @@ const useAlertGroupsModal = (
         </Modal.ButtonRow>
       </Modal>
     ),
-    [alertGroups, handleDismiss, instancesByState, matchers, formatter, showModal, alertManagerSourceName]
+    [safeAlertGroups, handleDismiss, instancesByState, matchers, formatter, showModal, alertManagerSourceName]
   );
 
   return [modalElement, handleShow, handleDismiss];

@@ -8,6 +8,9 @@ import { TabsBar } from '../Tabs/TabsBar';
 import { Drawer } from './Drawer';
 import mdx from './Drawer.mdx';
 
+// Adicionado Type Alias para resolver o erro "Missing Union Type Abstraction"
+type DrawerStatus = 'open' | 'closed';
+
 const meta: Meta<typeof Drawer> = {
   title: 'Overlays/Drawer',
   component: Drawer,
@@ -32,12 +35,14 @@ const meta: Meta<typeof Drawer> = {
 };
 
 export const Global: StoryFn<typeof Drawer> = (args) => {
-  const [isOpen, setIsOpen] = useState(false);
+  // REFATORADO01: Substituído booleano por Union Type explícito para evitar estados ambíguos
+  const [drawerState, setDrawerState] = useState<DrawerStatus>('closed');
+  const isOpen = drawerState === 'open';
   return (
     <>
-      <Button onClick={() => setIsOpen(true)}>Open drawer</Button>
+      <Button onClick={() => setDrawerState('open')}>Open drawer</Button>
       {isOpen && (
-        <Drawer {...args} onClose={() => setIsOpen(false)}>
+        <Drawer {...args} onClose={() => setDrawerState('closed')}>
           <div style={{ padding: '10px' }}>
             <ul>
               <li>this</li>
@@ -60,12 +65,14 @@ Global.args = {
 };
 
 export const LongContent: StoryFn<typeof Drawer> = (args) => {
-  const [isOpen, setIsOpen] = useState(false);
+  // REFATORADO02: Substituído booleano por Union Type para evitar "Multiple Booleans"
+  const [drawerState, setDrawerState] = useState<DrawerStatus>('closed');
+  const isOpen = drawerState === 'open';
   return (
     <>
-      <Button onClick={() => setIsOpen(true)}>Open drawer</Button>
+      <Button onClick={() => setDrawerState('open')}>Open drawer</Button>
       {isOpen && (
-        <Drawer {...args} onClose={() => setIsOpen(false)}>
+        <Drawer {...args} onClose={() => setDrawerState('closed')}>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
             dolore magna aliqua. Iaculis nunc sed augue lacus viverra vitae. Malesuada pellentesque elit eget gravida
@@ -141,12 +148,14 @@ LongContent.args = {
 };
 
 export const LongTitle: StoryFn<typeof Drawer> = (args) => {
-  const [isOpen, setIsOpen] = useState(false);
+  // REFATORADO03: Substituído booleano por Union Type para evitar estado ambíguo
+  const [drawerState, setDrawerState] = useState<DrawerStatus>('closed');
+  const isOpen = drawerState === 'open';
   return (
     <>
-      <Button onClick={() => setIsOpen(true)}>Open drawer</Button>
+      <Button onClick={() => setDrawerState('open')}>Open drawer</Button>
       {isOpen && (
-        <Drawer {...args} onClose={() => setIsOpen(false)}>
+        <Drawer {...args} onClose={() => setDrawerState('closed')}>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
             dolore magna aliqua. Iaculis nunc sed augue lacus viverra vitae. Malesuada pellentesque elit eget gravida
@@ -225,8 +234,11 @@ LongTitle.args = {
 };
 
 export const WithTabs: StoryFn<typeof Drawer> = (args) => {
-  const [isOpen, setIsOpen] = useState(false);
+  // REFATORADO04: Substituído 'isOpen' por um estado explícito.
+  const [drawerState, setDrawerState] = useState<DrawerStatus>('closed');
   const [activeTab, setActiveTab] = useState('options');
+
+  const isOpen = drawerState === 'open';
 
   const tabs = (
     <TabsBar>
@@ -252,9 +264,9 @@ export const WithTabs: StoryFn<typeof Drawer> = (args) => {
 
   return (
     <>
-      <Button onClick={() => setIsOpen(true)}>Open drawer</Button>
+      <Button onClick={() => setDrawerState('open')}>Open drawer</Button>
       {isOpen && (
-        <Drawer {...args} tabs={tabs} onClose={() => setIsOpen(false)}>
+        <Drawer {...args} tabs={tabs} onClose={() => setDrawerState('closed')}>
           {activeTab === 'options' && <div>Here are some options</div>}
           {activeTab === 'changes' && <div>Here are some changes</div>}
         </Drawer>
