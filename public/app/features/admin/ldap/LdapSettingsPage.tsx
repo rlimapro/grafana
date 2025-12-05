@@ -99,8 +99,10 @@ const emptySettings: LdapPayload = {
 
 export const LdapSettingsPage = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [isTestDrawerOpen, setIsTestDrawerOpen] = useState(false);
+  // REFATORADO: Substituí os booleanos 'isDrawerOpen' e 'isTestDrawerOpen' por um estado único 'activeDrawer'.
+  // Code Smell: Multiple Booleans for State resolvido.
+  const [activeDrawer, setActiveDrawer] = useState<'none' | 'advanced' | 'test'>('none');
+  
   const [usernameParam, setUsernameParam] = useState<string | null>(null);
 
   const [isBindPasswordConfigured, setBindPasswordConfigured] = useState(false);
@@ -144,7 +146,7 @@ export const LdapSettingsPage = () => {
       setIsLoading(false);
 
       if (username) {
-        setIsTestDrawerOpen(true);
+        setActiveDrawer('test');
       }
     }
     init();
@@ -405,7 +407,7 @@ export const LdapSettingsPage = () => {
                         </Trans>
                       </Text>
                     </Stack>
-                    <Button variant="secondary" onClick={() => setIsDrawerOpen(true)}>
+                    <Button variant="secondary" onClick={() => setActiveDrawer('advanced')}>
                       <Trans i18nKey="ldap-settings-page.advanced-settings-section.edit-button">Edit</Trans>
                     </Button>
                   </Stack>
@@ -427,7 +429,7 @@ export const LdapSettingsPage = () => {
                     <Button variant="secondary" onClick={handleSubmit(saveForm)}>
                       <Trans i18nKey="ldap-settings-page.buttons-section.save-button">Save</Trans>
                     </Button>
-                    <Button variant="secondary" onClick={() => setIsTestDrawerOpen(true)}>
+                    <Button variant="secondary" onClick={() => setActiveDrawer('test')}>
                       <Trans i18nKey="ldap-settings-page.buttons-section.test-button">Test</Trans>
                     </Button>
                     <LinkButton href="/admin/authentication" variant="secondary">
@@ -461,16 +463,16 @@ export const LdapSettingsPage = () => {
                 </Box>
               </section>
             )}
-            {isDrawerOpen && (
+            {activeDrawer === 'advanced' && (
               <LdapDrawerComponent
-                onClose={() => setIsDrawerOpen(false)}
+                onClose={() => setActiveDrawer('none')}
                 mapKeyCertConfigured={mapKeyCertConfigured}
                 setMapKeyCertConfigured={setMapKeyCertConfigured}
               />
             )}
           </form>
-          {isTestDrawerOpen && (
-            <LdapTestDrawer onClose={() => setIsTestDrawerOpen(false)} username={usernameParam || undefined} />
+          {activeDrawer === 'test' && (
+            <LdapTestDrawer onClose={() => setActiveDrawer('none')} username={usernameParam || undefined} />
           )}
         </FormProvider>
       </Page.Contents>
